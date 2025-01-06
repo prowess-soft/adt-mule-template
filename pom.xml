@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ORGANIZATION_ID value of master org. -->
+	<groupId>9313fbe3-8cbb-42a2-87f3-4ab5a1f54345</groupId>
+	<artifactId>template-api-app-v1</artifactId>
+	<!-- add -app-vX(Major version) -->
+	<version>${app.version}-${jenkins.version}-${mule.env}</version>
+	<packaging>mule-application</packaging>
+	<name>template-api</name>
+	<description>Mule API starter project template</description>
+	<properties>
+		<!-- Project Properties -->
+		<organization.id>9313fbe3-8cbb-42a2-87f3-4ab5a1f54345</organization.id>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<!-- RAML version -->
+		<app.version>1.2.4</app.version>
+		<!-- Do not modify -->
+		<jenkins.version>0</jenkins.version>
+		<mule.env>local</mule.env>
+
+		<!-- URL Properties -->
+		
+		<app.url.version>v1</app.url.version>
+		<visualizer.layer>System</visualizer.layer>
+
+		<!-- Default Allocation Resources DO NOT CHANGE -->
+		<resource.vcores>0.2</resource.vcores>
+		<resources.replicas>1</resources.replicas>
+		<resources.replicas>1</resources.replicas>
+		<deploymentSettings.clustered>false</deploymentSettings.clustered>
+		<deploymentSettings.enforceDeployingReplicasAcrossNodes>false</deploymentSettings.enforceDeployingReplicasAcrossNodes>
+		<deploymentSettings.lastMileSecurity>false</deploymentSettings.lastMileSecurity>
+		<deploymentSettings.updateStrategy>rolling</deploymentSettings.updateStrategy>
+
+		<!-- Runtime Properties -->
+		<app.runtime>4.4.0</app.runtime>
+		<mule.maven.plugin.version>4.2.0</mule.maven.plugin.version>
+		<munit.version>2.3.14</munit.version>
+
+		<!-- SCM properties -->
+		<maven.release.plugin.version>2.5.3</maven.release.plugin.version>
+		<project.scm.id>bitbucket-git-repo</project.scm.id>
+	</properties>
+
+	<!-- Build Settings -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.mule.tools.maven</groupId>
+				<artifactId>mule-maven-plugin</artifactId>
+				<version>${mule.maven.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<cloudhub2Deployment>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>${app.runtime}</muleVersion>
+						<applicationName>${name}-${app.url.version}${app.url.env}</applicationName>
+						<target>${anypoint.privatespace.name}</target>
+						<environment>${environment}</environment>
+						<provider>MC</provider>
+						<replicas>${resources.replicas}</replicas>
+						<vCores>${resource.vcores}</vCores>
+						<connectedAppClientId>${connectedAppClientId}</connectedAppClientId>
+						<connectedAppClientSecret>${connectedAppClientSecret}</connectedAppClientSecret>
+						<connectedAppGrantType>${connectedAppGrantType}</connectedAppGrantType>
+						<properties>
+							<mule.env>${mule.env}</mule.env>
+							<anypoint.platform.visualizer.layer>${visualizer.layer}</anypoint.platform.visualizer.layer>
+							<mule.properties>${mule.properties}</mule.properties>
+							<jenkins.version>${jenkins.version}</jenkins.version>
+							<api.id>${api.id}</api.id>
+							<apikit.console.disabled>${apikit.console.disabled}</apikit.console.disabled>
+							<splunk.token>${splunk.token}</splunk.token>
+							<splunk.index>${splunk.index}</splunk.index>
+							<splunk.url>${splunk.url}</splunk.url>
+						</properties>
+						<secureProperties>
+							<mule.encryption.key>${mule.encryption.key}</mule.encryption.key>
+							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
+							<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
+						</secureProperties>
+						<deploymentSettings>
+							<enforceDeployingReplicasAcrossNodes>${deploymentSettings.enforceDeployingReplicasAcrossNodes}</enforceDeployingReplicasAcrossNodes>
+							<updateStrategy>${deploymentSettings.updateStrategy}</updateStrategy>
+							<clustered>${deploymentSettings.clustered}</clustered>
+							<lastMileSecurity>${deploymentSettings.lastMileSecurity}</lastMileSecurity>
+						</deploymentSettings>
+						<integrations>
+							<services>
+								<objectStoreV2>
+									<enabled>${integrations.objectStoreV2}</enabled>
+								</objectStoreV2>
+							</services>
+						</integrations>
+					</cloudhub2Deployment>
+					
+					<classifier>mule-application</classifier>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit.version}</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+							<goal>coverage-report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<coverage>
+						<ignoreFiles>
+							<ignoreFile>log-api.xml</ignoreFile>
+							<ignoreFile>log-non-api.xml</ignoreFile>
+							<ignoreFile>error-handler-callback.xml</ignoreFile>
+							<ignoreFile>error-handler-adt.xml</ignoreFile>
+						</ignoreFiles>
+						<runCoverage>true</runCoverage>
+						<failBuild>true</failBuild>
+						<requiredApplicationCoverage>75</requiredApplicationCoverage>
+						<formats>
+							<format>json</format>
+							<format>html</format>
+						</formats>
+					</coverage>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>${maven.release.plugin.version}</version>
+			</plugin>
+		</plugins>
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>com.splunk.logging</groupId>
+			<artifactId>splunk-library-javalogging</artifactId>
+			<version>1.11.7</version>
+		</dependency>
+		<dependency>
+			<groupId>9313fbe3-8cbb-42a2-87f3-4ab5a1f54345</groupId>
+			<artifactId>common-logger</artifactId>
+			<version>2.1.0</version>
+			<classifier>custom</classifier>
+		</dependency>
+		<dependency>
+			<groupId>9313fbe3-8cbb-42a2-87f3-4ab5a1f54345</groupId>
+			<artifactId>common-error-handling</artifactId>
+			<version>2.0.4</version>
+			<classifier>custom</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<version>2.3.14</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<version>2.3.14</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-validation-module</artifactId>
+			<version>2.0.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.modules</groupId>
+			<artifactId>mule-apikit-module</artifactId>
+			<version>1.9.2</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.modules</groupId>
+			<artifactId>mule-secure-configuration-property-module</artifactId>
+			<version>1.2.5</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-http-connector</artifactId>
+			<version>1.8.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+	</dependencies>
+	<scm>
+		<connection>scm:git:GIT_REPO_URL</connection>
+		<developerConnection>scm:git:GIT_REPO_URL</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>splunk-artifactory</id>
+			<name>Splunk Releases</name>
+			<url>https://splunk.jfrog.io/splunk/ext-releases-local</url>
+		</repository>
+		<repository>
+			<id>anypoint-exchange-v3</id>
+			<name>Anypoint Exchange V3</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>mulesoft-releases</id>
+			<name>MuleSoft Releases Repository</name>
+			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mulesoft-releases</id>
+			<name>mulesoft release repository</name>
+			<layout>default</layout>
+			<url>https://repository.mulesoft.org/releases/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<!-- to publish assets to Exchange -->
+	<distributionManagement>
+		<repository>
+			<id>AnypointRepository</id>
+			<name>Exchange Repository</name>
+			<url>https://maven.anypoint.mulesoft.com/api/v3/organizations/${organization.id}/maven</url>
+			<layout>default</layout>
+		</repository>
+	</distributionManagement>
+
+</project>
