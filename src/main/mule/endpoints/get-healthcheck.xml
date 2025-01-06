@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+  <flow name="template-healthcheck-flow" doc:id="ccccadf7-29d6-45a2-822d-e2efd9793fdd" >
+    <set-variable value='#["204"]' doc:name="FV Set httpStatus" doc:id="ad20249a-5a5b-40ae-8e1e-b7482a8ffb9a" variableName="httpStatus"/>
+  </flow>
+</mule>

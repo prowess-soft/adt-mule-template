@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd  http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <apikit:config name="template-api-config" api="resource::9313fbe3-8cbb-42a2-87f3-4ab5a1f54345:template-api:1.2.4:raml:zip:template-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="template-api-main">
+        <http:listener config-ref="template-api-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <ee:transform doc:name="Set Initial Request Variables" doc:id="4897c5b8-46ef-4642-b850-a0d428e70223">
+            <ee:message />
+            <ee:variables>
+                <ee:set-variable resource="transformations.request/initialPayload.dwl" variableName="initialPayload" />
+                <ee:set-variable resource="transformations.request/requestData.dwl" variableName="requestData" />
+            </ee:variables>
+        </ee:transform>
+        <apikit:router config-ref="template-api-config" />
+        <error-handler ref="error-handler-adt" />
+    </flow>
+    <flow name="template-api-console">
+        <http:listener config-ref="template-api-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="template-api-config" />
+        <error-handler ref="error-handler-adt" />
+    </flow>
+    <flow name="get:\healthapp:template-api-config">
+        <flow-ref doc:name="Flow Reference to mmb-search-custsite-healthcheck-flow" doc:id="c3ca839a-883e-4d0f-9870-64d6e5195300" name="template-healthcheck-flow" />
+    </flow>
+    
+</mule>

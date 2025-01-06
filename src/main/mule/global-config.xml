@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule  xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+  xmlns:cofww-logger="http://www.mulesoft.org/schema/mule/cofww-logger"
+  xmlns:http="http://www.mulesoft.org/schema/mule/http"
+  xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+  xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/cofww-logger http://www.mulesoft.org/schema/mule/cofww-logger/current/mule-cofww-logger.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+  <!-- This configuration uses default algorithm (AES) and mode (CBC) -->
+  <secure-properties:config
+    name="Secure_Properties_Config"
+    doc:name="Environment-specific Secure Properties Config"
+    doc:id="b64daa35-1683-43f6-84c9-21776df3753a"
+    file="security/template-api-secure-${mule.properties}.yaml"
+    key="${mule.encryption.key}" />
+
+  <configuration-properties
+    doc:name="Application Configuration properties"
+    doc:id="4e9071c0-5800-46f3-8031-b1ae639c2256"
+    file="properties/template-api-${mule.env}.yaml" />
+    
+      <http:listener-config name="template-api-httpListenerConfig">
+    <http:listener-connection host="0.0.0.0"
+      port="${http.listener.port}"
+      connectionIdleTimeout="${http.listener.timeout}">
+      <reconnection>
+        <reconnect
+          frequency="${http.listener.reconnectionFrequency}"
+          count="${http.listener.attempts}" />
+      </reconnection>
+    </http:listener-connection>
+  </http:listener-config>
+
+  <configuration-properties
+    doc:name="Common Configuration properties"
+    doc:id="8f0a30ee-8023-4aa2-91a3-c8ab1f805c27"
+    file="properties/template-api-common.yaml" />
+
+  <global-property doc:name="default mule.env"
+    doc:id="fe3c60da-e4a7-4f63-b47b-6f30a7b8bc93" name="mule.env"
+    value="local" />
+
+  <global-property
+    doc:name="default mule.encryption.key"
+    doc:id="562465a7-8482-41fb-ad41-be913eca44c9"
+    name="mule.encryption.key" value="123456789mulesof" />
+
+  <global-property doc:name="default mule.properties"
+    doc:id="cf1810dc-3592-44cb-8601-756f60192560" name="mule.properties"
+    value="local" />
+
+  <import doc:name="Import" file="log-api.xml"
+    doc:id="088ee96e-0c62-4055-87b4-1ffad507e230" />
+  <import doc:name="Import" file="error-handler-adt.xml"
+    doc:id="c3d7f8b0-1b9f-4d72-9fe7-f99c94701b1c" />
+  <import doc:name="Import" file="error-handler-callback.xml"
+    doc:id="e57066e2-a928-4157-8629-d4a922862895" />
+  <configuration-properties
+    doc:name="Configuration properties"
+    doc:id="0dfe00c9-9996-4d5d-868c-24d40f3ec9eb"
+    file="properties/adt-logger-common.yaml" />
+    
+    
+    <import doc:name="Import" file="error-handler-adt.xml"
+    doc:id="90cb3d9c-dba4-4f86-8804-346df72d25c7" />
+    
+    <import doc:name="Import" file="error-handler-callback.xml"
+    doc:id="ff41952c-1b8f-42bd-95f5-c1977e19f7cc" />
+
+  
+
+    <api-gateway:autodiscovery apiId="${api.id}"
+    doc:name="API Autodiscovery"
+    doc:id="99fac178-73f2-484b-8821-be13d2c2201a"
+    flowRef="template-api-main"  /> 
+</mule>
